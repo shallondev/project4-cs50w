@@ -1,0 +1,30 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+    <h2>{{ profile_user }}</h2>
+
+    {% if user.is_authenticated %}
+        {% if request.user != profile_user %}
+            <form id="post-form" method="POST" action="">
+                {% csrf_token %}
+                {% if request.user in followers %}
+                    <input class="btn btn-primary" type="submit" id="followbtn" value="Unfollow">
+                {% else %}
+                    <input class="btn btn-primary" type="submit" id="followbtn" value="Follow">
+                {% endif %}
+            </form>
+        {% endif %}
+    {% endif %}
+
+    <h3>Followers: {{ followerscount }}</h3>
+    <h3>Following: {{ following }}</h3>
+
+    {% for posting in postings %}
+    <div class="ml-3 mr-3 mt-2" id="posting-card">
+        <h3 class="mt-3"><a href="{% url 'profile_view' username=posting.user.username %}">{{ posting.user }}</a></h3>
+        <p>Edit</p>
+        <P>{{ posting.content }}</P>
+        <p>{{ posting.timestamp }}</p>
+    </div>
+    {% endfor %}
+{% endblock %}

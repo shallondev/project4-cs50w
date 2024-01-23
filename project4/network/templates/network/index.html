@@ -1,5 +1,47 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
-    TODO
+    <h2>{{ h2_label }} Posts</h2>
+
+    {% if user.is_authenticated %}
+        <div id="post-container" class="ml-3">
+            <h3>{{ h3_label }} Post</h3>
+            <form id="post-form" method="POST" action="">
+                {% csrf_token %}
+                <div class="form-group">
+                    <textarea id="post-content" class="form-control" placeholder="I am thinking about..." name="content">{{ posting_content }}</textarea>
+                </div>
+                <input class="btn btn-primary" type="submit" value="{{ btn_value }}">
+            </form>
+        </div>
+    {% endif %}
+
+    {% for posting in page_obj %}
+        <div class="ml-3 mr-3 mt-2" id="posting-card">
+            <h3 class="mt-3"><a href="{% url 'profile_view' username=posting.user.username %}">{{ posting.user }}</a></h3>
+            {% if posting.user == request.user %}
+                <p><a href="{% url 'edit' posting=posting.id %}">Edit</a></p>
+            {% endif %}
+            <P>{{ posting.content }}</P>
+            <p>{{ posting.timestamp }}</p>
+        </div>
+    {% endfor %}
+
+    <div class="pagination mt-3">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
 {% endblock %}
